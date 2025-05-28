@@ -3,27 +3,53 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projek/Pages/enkelKennisgewingPage.dart';
 import 'package:projek/Theme/appColors.dart';
+import 'package:projek/Theme/darkModeTheme.dart';
 import 'package:projek/Widgets/customBottomNavBar.dart';
 import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/services/firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Tuisbladpage extends StatefulWidget {
-  const Tuisbladpage({super.key});
+  final bool isDarkMode;
+  final Function(bool) toggleThemeMode;
+  const Tuisbladpage({super.key , required this.isDarkMode, required this.toggleThemeMode});
+  
 
   @override
   State<Tuisbladpage> createState() => _TuisbladpageState();
 }
 
 class _TuisbladpageState extends State<Tuisbladpage> {
+
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    gekiesdeKatogorie = kategorieList[0]; 
+    _loadMode();
+  }
+
+  Future<void> _loadMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('darkMode') ?? false;
+    });
+  }
+
+  Future<void> _toggleMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('darkMode', value);
+    setState(() {
+      _isDarkMode = value;
+    });
+  }
+
   Firestore firestore = Firestore();
   List<String> kategorieList = ["almal" , "akademie" , "velore goed" , "ander"];
   late String gekiesdeKatogorie;
 
-    @override
-  void initState() {
-    super.initState();
-    gekiesdeKatogorie = kategorieList[0]; 
-  }
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +60,9 @@ class _TuisbladpageState extends State<Tuisbladpage> {
           // Background SVG
           Positioned.fill(
             child: SvgPicture.asset(
-              'assets/background_white.svg',
+              _isDarkMode
+                  ? 'assets/background_black.svg'
+                  : 'assets/background_white.svg',
               fit: BoxFit.cover,
             ),
           ),
@@ -107,6 +135,8 @@ class _TuisbladpageState extends State<Tuisbladpage> {
                                               ),
                                               id: enkelKennisgewing.id,
                                               datum: enkelKennisgewing.get('datum'),
+                                              isDarkMode: widget.isDarkMode,
+                                              toggleThemeMode: widget.toggleThemeMode,
                                             ),
                                       ),
                                     );

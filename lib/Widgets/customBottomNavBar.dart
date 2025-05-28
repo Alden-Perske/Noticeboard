@@ -5,7 +5,7 @@ class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   const CustomBottomNavBar({super.key, required this.currentIndex});
 
-  static const List<String> _routes = ['/', '/addKennisgewing', '/page2' ];
+  static const List<String> _routes = ['/', '/addKennisgewing', '/settings' ];
 
   void _onItemTapped(BuildContext context, int index) {
     if (index != currentIndex) {
@@ -29,7 +29,7 @@ class CustomBottomNavBar extends StatelessWidget {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings),
-          label: 'Page 2',
+          label: 'Settings',
         ),
       ],
     );

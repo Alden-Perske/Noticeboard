@@ -62,4 +62,7 @@ class Firestore {
   }
 
   // DELETE
+  Future<void> verwyderKennisgewing({required String id,}) async {
+    return kennisgewings.doc(id).delete();
+  }
 }

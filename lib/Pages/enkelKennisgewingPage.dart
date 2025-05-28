@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:projek/Pages/addKennisgewingPage.dart';
 import 'package:projek/Theme/appColors.dart';
+import 'package:projek/Widgets/customConfrimDialog.dart';
+import 'package:projek/Widgets/customDialog.dart';
 import 'package:projek/Widgets/grayContainer.dart';
+import 'package:projek/services/firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Enkelkennisgewingpage extends StatefulWidget {
   final String titel;
@@ -11,6 +15,8 @@ class Enkelkennisgewingpage extends StatefulWidget {
   final String datum;
   final String skrywer;
   final String id;
+  final bool isDarkMode;
+  final Function(bool) toggleThemeMode;
 
   const Enkelkennisgewingpage({
     super.key,
@@ -20,6 +26,8 @@ class Enkelkennisgewingpage extends StatefulWidget {
     required this.datum,
     required this.skrywer,
     required this.id,
+    required this.isDarkMode, 
+    required this.toggleThemeMode
   });
   
 
@@ -28,6 +36,30 @@ class Enkelkennisgewingpage extends StatefulWidget {
 }
 
 class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
+
+  bool _isDarkMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMode();
+  }
+
+  Future<void> _loadMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('darkMode') ?? false;
+    });
+  }
+
+  Future<void> _toggleMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('darkMode', value);
+    setState(() {
+      _isDarkMode = value;
+    });
+  }
+  Firestore firestore = Firestore();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,9 +71,11 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
             // Background SVG
             Positioned.fill(
               child: SvgPicture.asset(
-                'assets/background_white.svg',
-                fit: BoxFit.cover,
-              ),
+              _isDarkMode
+                  ? 'assets/background_black.svg'
+                  : 'assets/background_white.svg',
+              fit: BoxFit.cover,
+            ),
             ),
 
             // Foreground scrollable content
@@ -149,6 +183,8 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                                               kategorie: widget.kategorie,
                                               id: widget.id,
                                               datum: widget.datum,
+                                              isDarkMode: widget.isDarkMode,
+                                              toggleThemeMode: widget.toggleThemeMode,
                                             ),
                                       ),
                                     );
@@ -177,8 +213,15 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                                   ),
                                 ),
                               ),
-                              onPressed: () {
-                                
+                              onPressed: () async {
+                                bool? pressedConfirm = await showConfirmationDialog(context,"Are you sure you want to delete this post with title:${widget.titel}?","Verwyder kennigewing");
+                                if(pressedConfirm == true){
+                                  
+                                  firestore.verwyderKennisgewing(id: widget.id);
+                                  Navigator.pushNamed(context, '/');
+                                  showCustomDialog(context, "Deleted post with title ${widget.titel}.", "Kennisgewing is verwyder");
+
+                                }
                               },
                               child: Text("Delete"),
                             ),

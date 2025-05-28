@@ -14,6 +14,7 @@ dependencies:
   firebase_core: ^2.0.0 # om aan firebase te konnekteer
   cloud_firestore: ^4.0.0 # om te skryf na firebase se databasis
   uuid: ^4.0.0 # unieke kodes te genereer vir kennisgewing id's
+  shared_preferences: ^2.0.15 # gebruik om darkmode of lighrmode te stoor
 
 dev_dependencies:
   flutter_test:

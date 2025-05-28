@@ -6,6 +6,7 @@ import 'package:projek/Widgets/customDialog.dart';
 import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/Widgets/grayInputContainer.dart';
 import 'package:projek/services/firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Addkennisgewingpage extends StatefulWidget {
   final String? id;
@@ -14,14 +15,18 @@ class Addkennisgewingpage extends StatefulWidget {
   final String? skrywer;
   final String? kategorie;
   final String? datum;
+  final bool isDarkMode;
+  final Function(bool) toggleThemeMode;
 
   const Addkennisgewingpage({
+    this.id,
     this.titel,
     this.teks,
     this.skrywer,
     this.kategorie,
-    this.id,
     this.datum,
+    required this.isDarkMode,
+    required this.toggleThemeMode,
     super.key,
   });
 
@@ -42,12 +47,34 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
   late TextEditingController _skrywerController;
   String? _selectedKategorie;
 
+  
+
+  bool _isDarkMode = false;
+
+  @override
   void initState() {
     super.initState();
     _titelController = TextEditingController(text: widget.titel ?? '');
     _teksController = TextEditingController(text: widget.teks ?? '');
     _skrywerController = TextEditingController(text: widget.skrywer ?? '');
     _selectedKategorie = widget.kategorie ?? 'akademie'; // default
+    _loadMode();
+    
+  }
+
+  Future<void> _loadMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('darkMode') ?? false;
+    });
+  }
+
+  Future<void> _toggleMode(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('darkMode', value);
+    setState(() {
+      _isDarkMode = value;
+    });
   }
 
   // Sit page in editing mode
@@ -70,7 +97,9 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
           // Background SVG
           Positioned.fill(
             child: SvgPicture.asset(
-              'assets/background_white.svg',
+              _isDarkMode
+                  ? 'assets/background_black.svg'
+                  : 'assets/background_white.svg',
               fit: BoxFit.cover,
             ),
           ),
@@ -178,7 +207,7 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
                                 backgroundColor: WidgetStateProperty.all(
                                   Theme.of(context).primaryColorDark,
                                 ),
-                                foregroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColorLight)
+                                foregroundColor: WidgetStatePropertyAll(AppColors.white)
                               ),
                               onPressed: () {
                                 String? titel = _titelController.text;  
