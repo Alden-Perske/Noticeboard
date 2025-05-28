@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:projek/Pages/loginPage.dart';
+import 'package:projek/Pages/addKennisgewingPage.dart';
+import 'package:projek/Pages/tuisbladPage.dart';
 import 'package:projek/Theme/appColors.dart';
-import 'package:projek/Widgets/customBottomNavBar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MainApp());
 }
 
@@ -17,14 +23,17 @@ class MainApp extends StatelessWidget {
       title: 'Navigation App',
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomeScreen(),
-        '/page1': (context) => const Page1(),
-        '/page2': (context) => const Page2(),
+        '/': (context) => const Tuisbladpage(),
+        // '/page2': (context) => const Page2(),
+        '/addKennisgewing': (context) => const Addkennisgewingpage(),
 
       },
       theme: ThemeData(
         primaryColor: AppColors.slate,
-        scaffoldBackgroundColor: AppColors.white,
+        primaryColorDark: AppColors.navy,
+        primaryColorLight: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
+
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.slate,
           foregroundColor: Colors.white,
@@ -35,7 +44,6 @@ class MainApp extends StatelessWidget {
           unselectedItemColor: AppColors.lavender,
         ),
         textTheme: const TextTheme(
-          
           displayLarge: TextStyle(color: AppColors.navy),
           displayMedium: TextStyle(color: AppColors.navy),
           displaySmall: TextStyle(color: AppColors.navy),
@@ -44,16 +52,19 @@ class MainApp extends StatelessWidget {
           headlineSmall: TextStyle(color: AppColors.navy),
           titleLarge: TextStyle(color: AppColors.navy),
           titleMedium: TextStyle(color: AppColors.navy),
-          titleSmall: TextStyle(color: AppColors.navy),
+          titleSmall: TextStyle(color: AppColors.navy , fontWeight: FontWeight.bold),
 
           // Body text + labels in slate
           bodyLarge: TextStyle(color: AppColors.slate),
-          bodyMedium: TextStyle(color: AppColors.slate),
-          bodySmall: TextStyle(color: AppColors.slate),
+          bodyMedium: TextStyle(color: Colors.grey),
+          bodySmall: TextStyle(color: Colors.grey ),
           labelLarge: TextStyle(color: AppColors.slate),
           labelMedium: TextStyle(color: AppColors.slate),
           labelSmall: TextStyle(color: AppColors.slate),
         ),
+        buttonTheme: ButtonThemeData(
+          buttonColor: AppColors.navy,
+        )
       ),
 
     );
@@ -62,56 +73,6 @@ class MainApp extends StatelessWidget {
 
 
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          // Background SVG
-          Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/background_white.svg',
-              fit: BoxFit.cover,
-            ),
-          ),
-          // Foreground content
-          const Center(
-            child: Text('Home Screen'),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
-    );
-  }
-}
 
-/// Page 1
-class Page1 extends StatelessWidget {
-  const Page1({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page 1')),
-      body: const Center(child: Text('This is Page 1')),
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 1),
-    );
-  }
-}
-
-/// Page 2
-class Page2 extends StatelessWidget {
-  const Page2({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Page 2')),
-      body: const Center(child: Text('This is Page 2')),
-      bottomNavigationBar: const CustomBottomNavBar(currentIndex: 2),
-    );
-  }
-}

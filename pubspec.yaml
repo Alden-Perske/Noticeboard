@@ -9,7 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_svg: ^2.0.7
+  flutter_svg: ^2.0.7 # vir svg prentjies
+  intl: ^0.18.1 # om die datum functions te gebruik
+  firebase_core: ^2.0.0 # om aan firebase te konnekteer
+  cloud_firestore: ^4.0.0 # om te skryf na firebase se databasis
+  uuid: ^4.0.0 # unieke kodes te genereer vir kennisgewing id's
 
 dev_dependencies:
   flutter_test:

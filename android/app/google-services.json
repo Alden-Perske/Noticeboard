@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "6023145506",
+    "project_id": "ha2-projek",
+    "storage_bucket": "ha2-projek.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6023145506:android:923b6c83dd9ea1047d027b",
+        "android_client_info": {
+          "package_name": "com.example.projek"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC79OiwchrKrYkWng5XEsw539yEfGW8EMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

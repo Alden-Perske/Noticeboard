@@ -7,6 +7,11 @@
 .buildlog/
 .history
 
+# Firebase
+firebase.json
+.firebaserc
+.firebase/
+.firebase-tools/
 
 
 # Flutter repo-specific
