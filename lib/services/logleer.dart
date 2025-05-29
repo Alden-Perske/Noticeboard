@@ -2,6 +2,13 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// Gee funksies om na logleer te skryf en te lees
 
 class Logleer {
 

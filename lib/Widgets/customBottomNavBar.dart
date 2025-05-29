@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Custom Bottom Navigation Widget
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   const CustomBottomNavBar({super.key, required this.currentIndex});

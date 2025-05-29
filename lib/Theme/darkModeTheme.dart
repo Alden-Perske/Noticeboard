@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:projek/Theme/appColors.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
 // Stel die tema van die projek hier 
 // Sekere velde word "implicityly" gedoen bv. bottomNavigationBarTheme
 // Anders stel ek dit hadmatig met : Theme.of(context).primaryColor
@@ -30,7 +34,6 @@ ThemeData darkMode = ThemeData(
           titleMedium: TextStyle(color: AppColors.lavender),
           titleSmall: TextStyle(color: AppColors.lavender , fontWeight: FontWeight.bold),
 
-          // Body text + labels in slate
           bodyLarge: TextStyle(color: AppColors.white),
           bodyMedium: TextStyle(color: Colors.white),
           bodySmall: TextStyle(color: Colors.white ),

@@ -9,10 +9,25 @@ import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/services/firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// Stelsel naam : Meer kennis
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// % Vertoon en filtreer kennisgewings %
+//
+// Die bladsy vertoon al die kennisgewings wat op Firestore gestoor is.
+// Die kennisgewingbalk-metode gee dinamies die prentjie of logo van die ooreenstemmende kategorie van 'n kennisgewing.
+// Gee die opsie om hulle te filtreer volgens kategorie met 'n "Dropdownlist".
+
+// NB: Die Firestore onder Dienste hou die logika om met Firestore te kommunikeer.
+
 class Tuisbladpage extends StatefulWidget {
   final bool isDarkMode;
-  final Function(bool) toggleThemeMode;
-  const Tuisbladpage({super.key , required this.isDarkMode, required this.toggleThemeMode});
+  const Tuisbladpage({super.key , required this.isDarkMode});
   
 
   @override
@@ -22,26 +37,19 @@ class Tuisbladpage extends StatefulWidget {
 class _TuisbladpageState extends State<Tuisbladpage> {
 
   bool _isDarkMode = false;
-
+  // Laai die gekiesde tema vanaf plaaslike persistent storage.
+  // Beide die onderste metodes word op elke bladsy gebruik
   @override
   void initState() {
     super.initState();
     gekiesdeKatogorie = kategorieList[0]; 
     _loadMode();
   }
-
+  // Laai die gekiesde tema vanaf plaaslike persistent storage.
   Future<void> _loadMode() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _isDarkMode = prefs.getBool('darkMode') ?? false;
-    });
-  }
-
-  Future<void> _toggleMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      _isDarkMode = value;
     });
   }
 
@@ -57,7 +65,6 @@ class _TuisbladpageState extends State<Tuisbladpage> {
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
       body: Stack(
         children: [
-          // Background SVG
           Positioned.fill(
             child: SvgPicture.asset(
               _isDarkMode
@@ -100,30 +107,33 @@ class _TuisbladpageState extends State<Tuisbladpage> {
 
                   // Gebruik expanded omdat anders gaan flutter 'n viewport error gee
 
-                  // Streambuilder bevat s
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: StreamBuilder<QuerySnapshot>(
                         // Kry lys of straam van json objects vanaf firbase db
-                        // Die firestore metode getAlmalKennisgewing filtreer die items 
+                        // Die firestore method getAlmalKennisgewing filtreer die items 
                         // volgens kategorie
                         stream: firestore.getAlmalKennisgewing(gekiesdeKatogorie),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            // As daar data is maak ons 'n lys van die JSON objects / promises
                             List kennisgewingsList = snapshot.data!.docs;
                             return ListView.builder(
                               itemCount: kennisgewingsList.length,
                               itemBuilder: (context, index) {
+                                // Stel enkel JSON objek voor.
                                 DocumentSnapshot enkelKennisgewing =
                                     kennisgewingsList[index];
                                 return Column(
                                   children: [
+                                    // Maak dat elke kennisgewing jou vat na sy enkelkennisgewing bladsy
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
+                                            // 
                                             builder:
                                                 (context) => Enkelkennisgewingpage(
                                                   titel: enkelKennisgewing.get('titel'),
@@ -137,11 +147,11 @@ class _TuisbladpageState extends State<Tuisbladpage> {
                                                   id: enkelKennisgewing.id,
                                                   datum: enkelKennisgewing.get('datum'),
                                                   isDarkMode: widget.isDarkMode,
-                                                  toggleThemeMode: widget.toggleThemeMode,
                                                 ),
                                           ),
                                         );
                                       },
+                                      // Bou custom container vir elke kennisgewing
                                       child: kennisgewingBar(
                                         enkelKennisgewing.get('titel'),
                                         enkelKennisgewing.get('teks'),
@@ -163,7 +173,6 @@ class _TuisbladpageState extends State<Tuisbladpage> {
                         },
                       ),
                     
-                      // child: kennisgewingBar("Eksamen", "Moenie vergeet nie", "Mev. Van Wyk", "akademie", "001", "2025-05-26", context)
                     ),
                   ),
                 ],
@@ -176,6 +185,7 @@ class _TuisbladpageState extends State<Tuisbladpage> {
   }
 }
 
+// Verander snapshot of JSON objekte in Container met teks
 Container kennisgewingBar(
   String titel,
   String teks,
@@ -210,7 +220,7 @@ Container kennisgewingBar(
   padding: EdgeInsets.all(8),
   decoration: greyContainer(context),
   child: Column(
-    mainAxisSize: MainAxisSize.min, // Add this to prevent infinite height
+    mainAxisSize: MainAxisSize.min, 
     children: [
       Row(
         crossAxisAlignment: CrossAxisAlignment.center,

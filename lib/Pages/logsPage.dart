@@ -5,6 +5,20 @@ import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/services/logleer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// % Vertoon al die inskrywings in die logleer %
+// Funksies:
+// - Vertoon alle inskrywings in die logleer
+// - Wys dat daar niks is as daar geen inskrywings is nie.
+//
+// NB: Die logleer is onder Dienste en hou die logika om na 'n teksleer toe te skryf en te lees.
+
+
 class LogsPage extends StatefulWidget {
 
   final bool isDarkMode;
@@ -37,15 +51,7 @@ class _LogsPageState extends State<LogsPage> {
       _isDarkMode = prefs.getBool('darkMode') ?? false;
     });
   }
-
-  Future<void> _toggleMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      _isDarkMode = value;
-    });
-  }
-
+  // Hanteer promise sodat teks vanaf leer gelees kan word
   Logleer logleer = Logleer();
   Future<String> getLogTeks() async {
     return await logleer.readLogFile();
@@ -59,10 +65,8 @@ class _LogsPageState extends State<LogsPage> {
       appBar: AppBar(title: Text("Logs")),
       bottomNavigationBar: CustomBottomNavBar(currentIndex: 3),
       body: SizedBox.expand(
-        // Make sure Stack fills full screen
         child: Stack(
           children: [
-            // Background SVG
             Positioned.fill(
               child: SvgPicture.asset(
               _isDarkMode
@@ -80,13 +84,15 @@ class _LogsPageState extends State<LogsPage> {
                   decoration: greyContainer(context),
                   child: FutureBuilder(future: getLogTeks(), 
                   builder: (context , snapshot) {
+                    // Kyk na snapshot se toestand 
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Text('Error loading logs: ${snapshot.error}');
                     } else {
+                      // As daar data is
                       return Text(snapshot.data?.isNotEmpty == true 
-                        ? snapshot.data! 
+                        ? snapshot.data! // Wys die data
                         : 'Geen logs beskikbaar nie.');
                     }
                   })

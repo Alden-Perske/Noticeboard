@@ -2,14 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
 
+// DOEL VAN DIE PAGE
+// ################################################################
 // Klas laat CRUD operations uitgevoer word
 class Firestore {
 
   // get collection of kennisgewings
   final CollectionReference kennisgewings = FirebaseFirestore.instance.collection('kennisgewings');
 
-  //CREATE nuwe
+  //CREATE 
   Future<void> addKennisgewing (String titel , String teks , String skrywer , String kategorie)async {
     // Gebruik nou dadelik se tyd
     DateTime now = DateTime.now();
@@ -29,6 +34,11 @@ class Firestore {
 
   }
   // READ filter volgens kateogrie wat gegee is 
+
+  // Gee ‘n Stream terug sodat jy in "real-time" op datum bly met Firestore-data
+  // Die stream gee ’n QuerySnapshot bevat al die dokumente (kennisgewings) wat pas by die query.
+  // Elke keer as iets in Firestore verander, ontvang jy outomaties ’n nuwe snapshot.
+  
   Stream<QuerySnapshot> getAlmalKennisgewing(String kategorie) {
   if (kategorie == "almal") {
     return kennisgewings

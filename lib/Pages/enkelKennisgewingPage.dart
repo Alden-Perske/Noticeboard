@@ -9,6 +9,28 @@ import 'package:projek/services/firestore.dart';
 import 'package:projek/services/logleer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// % Vertoon Enkel kennisgewing %
+// Laat toe dat:
+// - 'n Gebruiker NUWE kennisgewings kan maak (Create mode)
+// - Ou kennisgewings kan redigeer of opdateer. (Editing mode)
+// Gebruik die boolean isEditingMode om tussen verskillende modes te "swap".
+//
+// % Gee opsies om 'n kennisgewing te Edit en te Delete %
+// Die onderste knoppies gee die opsie om 'n hierdie kennisgewing te Edit en te delete.
+// 
+//
+// % Log maak van "deleting" % 
+// As kennisgewing suksesvol verwyder word, dan stoor die log file die  titel,
+// dat hy verwyder is en wanneer
+// 
+// NB logleer is onder dienste en hou die logika om na 'n teksleer toe te skryf en lees
+
 class Enkelkennisgewingpage extends StatefulWidget {
   final String titel;
   final String teks;
@@ -17,7 +39,6 @@ class Enkelkennisgewingpage extends StatefulWidget {
   final String skrywer;
   final String id;
   final bool isDarkMode;
-  final Function(bool) toggleThemeMode;
 
   const Enkelkennisgewingpage({
     super.key,
@@ -28,7 +49,6 @@ class Enkelkennisgewingpage extends StatefulWidget {
     required this.skrywer,
     required this.id,
     required this.isDarkMode, 
-    required this.toggleThemeMode
   });
   
 
@@ -53,13 +73,6 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
     });
   }
 
-  Future<void> _toggleMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      _isDarkMode = value;
-    });
-  }
   Logleer logleer = Logleer();
   Firestore firestore = Firestore();
   @override
@@ -67,10 +80,8 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.titel)),
       body: SizedBox.expand(
-        // Make sure Stack fills full screen
         child: Stack(
           children: [
-            // Background SVG
             Positioned.fill(
               child: SvgPicture.asset(
               _isDarkMode
@@ -79,8 +90,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
               fit: BoxFit.cover,
             ),
             ),
-
-            // Foreground scrollable content
+            // Vertoon al die informasie uit van kennisgewing
             SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16.0),
@@ -94,6 +104,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // Kry dinamies kategorie prentjie 
                           getSvg(widget.kategorie),
                           Expanded(
                             child: Text(
@@ -179,6 +190,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                                 foregroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColorLight)
                               ),
                               onPressed: () {
+                                // Verskaf inligting van kennisgewing wat gebruik word om die kennisgewing te edit
                                 Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -191,7 +203,6 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                                               id: widget.id,
                                               datum: widget.datum,
                                               isDarkMode: widget.isDarkMode,
-                                              toggleThemeMode: widget.toggleThemeMode,
                                             ),
                                       ),
                                     );
@@ -212,18 +223,21 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                                 ),
                                 shape: WidgetStatePropertyAll(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(100), // Optional rounded corners
+                                    borderRadius: BorderRadius.circular(100), 
                                     side: BorderSide(
-                                      color: Theme.of(context).primaryColorDark, // Border color
-                                      width: 2,          // Border width
+                                      color: Theme.of(context).primaryColorDark, 
+                                      width: 2,          
                                     ),
                                   ),
                                 ),
                               ),
+                              // Laat toe dat daar 'n waarskuwing is wat vra of jy die kennisgewing wil verwyder
                               onPressed: () async {
                                 bool? pressedConfirm = await showConfirmationDialog(context,"Are you sure you want to delete this post with title:${widget.titel}?","Verwyder kennigewing");
                                 if(pressedConfirm == true){
+                                  // Stoor die delete in logs.txt
                                   logleer.logKennisgewing(widget.titel, "DELETE: ${widget.titel} is verwyder");
+                                  // Verwyder dit vanaf firestore db
                                   firestore.verwyderKennisgewing(id: widget.id);
                                   Navigator.pushNamed(context, '/');
                                   showCustomDialog(context, "Deleted post with title ${widget.titel}.", "Kennisgewing is verwyder");
@@ -249,14 +263,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
   }
 }
 
-// String verkortTitel(String titel) {
-//   if (titel.length >= 20) {
-//     return titel.substring(0, 20);
-//   } else {
-//     return titel; // or some default value
-//   }
-// }
-
+// Kry regte kategoie prentjie volgens gegewe kategorie
 SvgPicture getSvg(String kategorie) {
   String kategorieIkoon = '';
   Color kleurVanIkoon = AppColors.navy;

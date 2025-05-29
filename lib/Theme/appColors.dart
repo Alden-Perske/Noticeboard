@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
 class AppColors {
   static const Color pink = Color(0xFFFF10F0);
   static const Color white = Color(0xFFFFFFFF);

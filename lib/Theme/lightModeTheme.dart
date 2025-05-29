@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:projek/Theme/appColors.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
 ThemeData lightMode = ThemeData(
         primaryColor: AppColors.slate,
         primaryColorDark: AppColors.navy,
@@ -27,7 +31,6 @@ ThemeData lightMode = ThemeData(
           titleMedium: TextStyle(color: AppColors.navy),
           titleSmall: TextStyle(color: AppColors.navy , fontWeight: FontWeight.bold),
 
-          // Body text + labels in slate
           bodyLarge: TextStyle(color: AppColors.slate),
           bodyMedium: TextStyle(color: Colors.grey),
           bodySmall: TextStyle(color: Colors.grey ),

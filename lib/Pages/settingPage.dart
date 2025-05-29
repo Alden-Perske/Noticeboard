@@ -4,7 +4,17 @@ import 'package:projek/Widgets/customBottomNavBar.dart';
 import 'package:projek/Widgets/grayContainer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// % Laat toe dat die tema vir die hele toepassing verander word %
+// Kan dus tussen lig- en donkermodus wissel.
+// NB: logika vir "state" hanteering van die tema's in in die Main.dart leer.
 class Settingpage extends StatefulWidget {
+  // erf metode om theme te verander vanaf main
   final bool isDarkMode;
   final Function(bool) toggleThemeMode;
 
@@ -48,6 +58,7 @@ class _SettingpageState extends State<Settingpage> {
                       const Text("Darkmode toggle:"),
                       const SizedBox(height: 8),
                       Switch(
+                        // Verander hier die theme
                         value: widget.isDarkMode,
                         onChanged: widget.toggleThemeMode,
                       ),

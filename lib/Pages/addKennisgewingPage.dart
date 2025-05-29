@@ -9,6 +9,30 @@ import 'package:projek/services/firestore.dart';
 import 'package:projek/services/logleer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Naam:Alden 
+// Van: Peach
+// Studente Nr: 2023010376
+
+// DOEL VAN DIE PAGE
+// ################################################################
+// % Editing en Creating %
+// Laat toe dat:
+// - 'n Gebruiker NUWE kennisgewings kan maak (Create mode)
+// - Ou kennisgewings kan redigeer of opdateer. (Editing mode)
+// Gebruik die boolean isEditingMode om tussen verskillende modes te "swap".
+//
+// % Verifieer data %
+// Verifieer dat:
+// - Die data nie te lank is nie , bv. titel wat nie moet en elk geval nie lank hoef te wees nie 
+//  ,want anders breek dit UI elemente en maak dat elemente sleg lyk.
+// - Dat textfield nie leeg is nie.
+//
+// % Log maak van editing
+// As kennisgewing suksesvol geredigeer word, dan stoor die log file die ou en nuwe titel, 
+// dat hy ge-edit is en die tydstempel wanneer dit gebeur.
+// 
+// NB: logleer is onder dienste en hou die logika om na 'n teksleer toe te skryf en lees.
+
 class Addkennisgewingpage extends StatefulWidget {
   final String? id;
   final String? titel;
@@ -17,7 +41,6 @@ class Addkennisgewingpage extends StatefulWidget {
   final String? kategorie;
   final String? datum;
   final bool isDarkMode;
-  final Function(bool) toggleThemeMode;
 
   const Addkennisgewingpage({
     this.id,
@@ -27,7 +50,6 @@ class Addkennisgewingpage extends StatefulWidget {
     this.kategorie,
     this.datum,
     required this.isDarkMode,
-    required this.toggleThemeMode,
     super.key,
   });
 
@@ -43,7 +65,7 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
   final List<String> options = ['akademie', 'velore goed', 'ander'];
   String? selectedValue;
 
-
+  // Later geinitialise
   late TextEditingController _titelController;
   late TextEditingController _teksController;
   late TextEditingController _skrywerController;
@@ -52,14 +74,14 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
   
 
   bool _isDarkMode = false;
-
+  // As parameters gegee word wysig dit in textfield indien wys dat textfield leeg is
   @override
   void initState() {
     super.initState();
     _titelController = TextEditingController(text: widget.titel ?? '');
     _teksController = TextEditingController(text: widget.teks ?? '');
     _skrywerController = TextEditingController(text: widget.skrywer ?? '');
-    _selectedKategorie = widget.kategorie ?? 'akademie'; // default
+    _selectedKategorie = widget.kategorie ?? 'akademie'; 
     _loadMode();
     
   }
@@ -71,23 +93,9 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
     });
   }
 
-  Future<void> _toggleMode(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('darkMode', value);
-    setState(() {
-      _isDarkMode = value;
-    });
-  }
-
+  // ACTIVATE EDITING MODE AS HY 'N ID IN SY PARAMATERS KRY
   // Sit page in editing mode
   bool get isEditingMode => widget.id != null;
-  
-
-  // TextEditingController titelController = widget.titel ? ''
-  // TextEditingController teksController = TextEditingController();
-  // TextEditingController skrywerController = TextEditingController();
-  // TextEditingController kategorieController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +104,6 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 1),
       body: Stack(
         children: [
-          // Background SVG
           Positioned.fill(
             child: SvgPicture.asset(
               _isDarkMode
@@ -105,20 +112,20 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
               fit: BoxFit.cover,
             ),
           ),
-          // Foreground scrollable content
+          // Vertoon al die textfields
           SafeArea(
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight:
                       MediaQuery.of(context).size.height -
-                      kToolbarHeight, // Subtract AppBar height if you want
+                      kToolbarHeight, 
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment:
-                        CrossAxisAlignment.start, // Optional: align text left
+                        CrossAxisAlignment.start, 
                     children: [
                       Container(
                         width: double.infinity,
@@ -216,16 +223,21 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
                                 String? teks = _teksController.text;
                                 String? skrywer = _skrywerController.text; 
                                 String? kategorie = selectedValue;
-
+                                
+                                // Validering word gedoen
                                 if(titel.isEmpty || teks.isEmpty || skrywer.isEmpty || kategorie == null){
                                   showCustomDialog(context, "Vul in al die velde." , "Error");
                                 }else if(skrywer.length > 35 || teks.length > 1000 || titel.length > 19){
                                   showCustomDialog(context, "Skrywer(35) , teks(1000) of titel(19) is te lank" , "Error");
                                 }
+                                // Kyk of die teks in edit mode is of nie
                                  else{
                                   if(isEditingMode){
+                                    // Vertoon boodskap afhangend van watter mode die toepassing is 
                                   showCustomDialog(context, "Kennisgewing met die titel is suksesvol opgedateer", "Opgedateer");
+                                  // opdateer die kennisgewing op firestore
                                   firestore.opdateerKennisgewing(titel: titel, teks: teks, kategorie: kategorie, datum: widget.datum!, skrywer: skrywer, id: widget.id!);
+                                  // Voeg 'n inskrywing in die logs.txt
                                   logleer.logKennisgewing("Nuwe naam: $titel", "EDIT: oorspronklike naam: ${widget.titel}");
                                   }
                                   else{
@@ -234,6 +246,7 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
                                   firestore.addKennisgewing(titel, teks, skrywer, kategorie);
                                   
                                   }
+                                  // "clear" text en dropdownlist
                                   _titelController.clear();
                                   _teksController.clear();
                                   _skrywerController.clear();
@@ -247,7 +260,7 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
                             
                           ],
                         ),
-                      ), // optional spacing at the bottom
+                      ), 
                     ],
                   ),
                 ),
