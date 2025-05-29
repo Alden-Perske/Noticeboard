@@ -3,13 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 
-
+// Klas laat CRUD operations uitgevoer word
 class Firestore {
 
   // get collection of kennisgewings
   final CollectionReference kennisgewings = FirebaseFirestore.instance.collection('kennisgewings');
 
-  //CREATE
+  //CREATE nuwe
   Future<void> addKennisgewing (String titel , String teks , String skrywer , String kategorie)async {
     // Gebruik nou dadelik se tyd
     DateTime now = DateTime.now();
@@ -28,7 +28,7 @@ class Firestore {
     });
 
   }
-  // READ
+  // READ filter volgens kateogrie wat gegee is 
   Stream<QuerySnapshot> getAlmalKennisgewing(String kategorie) {
   if (kategorie == "almal") {
     return kennisgewings

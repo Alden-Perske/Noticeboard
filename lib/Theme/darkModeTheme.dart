@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:projek/Theme/appColors.dart';
 
+// Stel die tema van die projek hier 
+// Sekere velde word "implicityly" gedoen bv. bottomNavigationBarTheme
+// Anders stel ek dit hadmatig met : Theme.of(context).primaryColor
 ThemeData darkMode = ThemeData(
         primaryColor: AppColors.lavender,
         primaryColorDark: AppColors.lavender,

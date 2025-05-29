@@ -6,6 +6,7 @@ import 'package:projek/Widgets/customConfrimDialog.dart';
 import 'package:projek/Widgets/customDialog.dart';
 import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/services/firestore.dart';
+import 'package:projek/services/logleer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Enkelkennisgewingpage extends StatefulWidget {
@@ -59,6 +60,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
       _isDarkMode = value;
     });
   }
+  Logleer logleer = Logleer();
   Firestore firestore = Firestore();
   @override
   Widget build(BuildContext context) {
@@ -93,9 +95,14 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           getSvg(widget.kategorie),
-                          Text(
-                            widget.titel,
-                            style: Theme.of(context).textTheme.displayMedium,
+                          Expanded(
+                            child: Text(
+                              widget.titel,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.displayMedium,
+                            ),
                           ),
                         ],
                       ),
@@ -216,7 +223,7 @@ class _EnkelkennisgewingpageState extends State<Enkelkennisgewingpage> {
                               onPressed: () async {
                                 bool? pressedConfirm = await showConfirmationDialog(context,"Are you sure you want to delete this post with title:${widget.titel}?","Verwyder kennigewing");
                                 if(pressedConfirm == true){
-                                  
+                                  logleer.logKennisgewing(widget.titel, "DELETE: ${widget.titel} is verwyder");
                                   firestore.verwyderKennisgewing(id: widget.id);
                                   Navigator.pushNamed(context, '/');
                                   showCustomDialog(context, "Deleted post with title ${widget.titel}.", "Kennisgewing is verwyder");

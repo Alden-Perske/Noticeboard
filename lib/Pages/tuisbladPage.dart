@@ -53,7 +53,7 @@ class _TuisbladpageState extends State<Tuisbladpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Tuisblad")),
+      appBar: AppBar(title: Text("Tuisblad") , leading: SvgPicture.asset('assets/griffonSVG.svg'),),
       bottomNavigationBar: const CustomBottomNavBar(currentIndex: 0),
       body: Stack(
         children: [
@@ -66,12 +66,16 @@ class _TuisbladpageState extends State<Tuisbladpage> {
               fit: BoxFit.cover,
             ),
           ),
-          // Foreground scrollable content
+          // Safearea sit automaties padding by sodat dit nie agter 
+          // "onveilige areas" oorvleuel nie soos 'n front facing kamera ens.
           SafeArea(
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 minHeight: MediaQuery.of(context).size.height - kToolbarHeight,
               ),
+
+              // Bevat Dropdownbutton wat keuse gee tussen verskillende kategoriee
+              // en dit afhangende van kategorie filtreer
               child: Column(
                 children: [
                   Container(
@@ -96,21 +100,16 @@ class _TuisbladpageState extends State<Tuisbladpage> {
 
                   // Gebruik expanded omdat anders gaan flutter 'n viewport error gee
 
+                  // Streambuilder bevat s
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: StreamBuilder<QuerySnapshot>(
+                        // Kry lys of straam van json objects vanaf firbase db
+                        // Die firestore metode getAlmalKennisgewing filtreer die items 
+                        // volgens kategorie
                         stream: firestore.getAlmalKennisgewing(gekiesdeKatogorie),
                         builder: (context, snapshot) {
-
-                          // As kieslys tussen kategorie nie werk nie gebruik die om te debug
-
-                          // print('StreamBuilder rebuild, hasData: ${snapshot.hasData}, docs count: ${snapshot.data?.docs.length ?? 0}');
-                          // if (snapshot.hasError) {
-                          //   print('Stream error: ${snapshot.error}');
-                          //   return Center(child: Text("Error: ${snapshot.error}"));
-                          // }
-
                           if (snapshot.hasData) {
                             List kennisgewingsList = snapshot.data!.docs;
                             return ListView.builder(
@@ -118,38 +117,43 @@ class _TuisbladpageState extends State<Tuisbladpage> {
                               itemBuilder: (context, index) {
                                 DocumentSnapshot enkelKennisgewing =
                                     kennisgewingsList[index];
-                                return GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => Enkelkennisgewingpage(
-                                              titel: enkelKennisgewing.get('titel'),
-                                              teks: enkelKennisgewing.get('teks'),
-                                              skrywer: enkelKennisgewing.get(
-                                                'skrywer',
-                                              ),
-                                              kategorie: enkelKennisgewing.get(
-                                                'kategorie',
-                                              ),
-                                              id: enkelKennisgewing.id,
-                                              datum: enkelKennisgewing.get('datum'),
-                                              isDarkMode: widget.isDarkMode,
-                                              toggleThemeMode: widget.toggleThemeMode,
-                                            ),
+                                return Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder:
+                                                (context) => Enkelkennisgewingpage(
+                                                  titel: enkelKennisgewing.get('titel'),
+                                                  teks: enkelKennisgewing.get('teks'),
+                                                  skrywer: enkelKennisgewing.get(
+                                                    'skrywer',
+                                                  ),
+                                                  kategorie: enkelKennisgewing.get(
+                                                    'kategorie',
+                                                  ),
+                                                  id: enkelKennisgewing.id,
+                                                  datum: enkelKennisgewing.get('datum'),
+                                                  isDarkMode: widget.isDarkMode,
+                                                  toggleThemeMode: widget.toggleThemeMode,
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                      child: kennisgewingBar(
+                                        enkelKennisgewing.get('titel'),
+                                        enkelKennisgewing.get('teks'),
+                                        enkelKennisgewing.get('skrywer'),
+                                        enkelKennisgewing.get('kategorie'),
+                                        enkelKennisgewing.id,
+                                        enkelKennisgewing.get('datum'),
+                                        context,
                                       ),
-                                    );
-                                  },
-                                  child: kennisgewingBar(
-                                    enkelKennisgewing.get('titel'),
-                                    enkelKennisgewing.get('teks'),
-                                    enkelKennisgewing.get('skrywer'),
-                                    enkelKennisgewing.get('kategorie'),
-                                    enkelKennisgewing.id,
-                                    enkelKennisgewing.get('datum'),
-                                    context,
-                                  ),
+                                    ),
+                                    Divider(thickness: 1, color: Theme.of(context).primaryColor,)
+                                  ],
                                 );
                               },
                             );
@@ -196,34 +200,54 @@ Container kennisgewingBar(
     kleurVanIkoon = AppColors.orange;
   }
 
-  if (teks.length > 10) {
-    teks = teks.substring(0, 10);
-    teks += "...";
-  }
+  List<String> previewTeks = teks.split(" ");
+  
 
   datum = datum.substring(5, 10);
 
   return Container(
-    margin: EdgeInsets.all(4),
-    padding: EdgeInsets.all(8),
-    decoration: greyContainer(context),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        SvgPicture.asset(
-          kategorieIkoon,
-          height: 44,
-          width: 44,
-          colorFilter: ColorFilter.mode(kleurVanIkoon, BlendMode.srcIn),
-        ),
-        Column(
-          children: [
-            Text(titel, style: Theme.of(context).textTheme.titleSmall),
-            Text(teks, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-        Text(datum),
-      ],
-    ),
-  );
+  margin: EdgeInsets.all(4),
+  padding: EdgeInsets.all(8),
+  decoration: greyContainer(context),
+  child: Column(
+    mainAxisSize: MainAxisSize.min, // Add this to prevent infinite height
+    children: [
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+
+        children: [
+          SvgPicture.asset(
+            kategorieIkoon,
+            height: 44,
+            width: 44,
+            colorFilter: ColorFilter.mode(kleurVanIkoon, BlendMode.srcIn),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  titel,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          Text(datum),
+        ],
+      ),
+      Divider(thickness: 2, color: Theme.of(context).primaryColor,),
+      const SizedBox(height: 8),
+      Text(
+        teks,
+        style: Theme.of(context).textTheme.bodyMedium,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ],
+  ),
+);
 }

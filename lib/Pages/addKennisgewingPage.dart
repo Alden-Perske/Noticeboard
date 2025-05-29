@@ -6,6 +6,7 @@ import 'package:projek/Widgets/customDialog.dart';
 import 'package:projek/Widgets/grayContainer.dart';
 import 'package:projek/Widgets/grayInputContainer.dart';
 import 'package:projek/services/firestore.dart';
+import 'package:projek/services/logleer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Addkennisgewingpage extends StatefulWidget {
@@ -36,6 +37,7 @@ class Addkennisgewingpage extends StatefulWidget {
 
 class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
 
+  Logleer logleer = Logleer();
   Firestore firestore = Firestore();
 
   final List<String> options = ['akademie', 'velore goed', 'ander'];
@@ -224,6 +226,7 @@ class _AddkennisgewingpageState extends State<Addkennisgewingpage> {
                                   if(isEditingMode){
                                   showCustomDialog(context, "Kennisgewing met die titel is suksesvol opgedateer", "Opgedateer");
                                   firestore.opdateerKennisgewing(titel: titel, teks: teks, kategorie: kategorie, datum: widget.datum!, skrywer: skrywer, id: widget.id!);
+                                  logleer.logKennisgewing("Nuwe naam: $titel", "EDIT: oorspronklike naam: ${widget.titel}");
                                   }
                                   else{
                                   showCustomDialog(context, "Kennisgewing met die titel $titel is suksesvol opgelaai", "Sukses");

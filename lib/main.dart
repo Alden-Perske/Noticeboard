@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projek/Pages/addKennisgewingPage.dart';
+import 'package:projek/Pages/logsPage.dart';
 import 'package:projek/Pages/settingPage.dart';
 import 'package:projek/Pages/tuisbladPage.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,8 +8,6 @@ import 'package:projek/Theme/darkModeTheme.dart';
 import 'package:projek/Theme/lightModeTheme.dart';
 import 'firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,7 +53,9 @@ class _MainAppState extends State<MainApp> {
     });
     _saveThemeMode(_isDarkMode);
   }
-
+  // Skep routes en koppel hulle aan Pages
+  // Die parameters hieronder laat toe dat elke page weet watter
+  // tema gebruik words
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -70,6 +71,10 @@ class _MainAppState extends State<MainApp> {
         toggleThemeMode: _toggleThemeMode,
       ),
         '/addKennisgewing': (context) =>  Addkennisgewingpage(
+          isDarkMode: _isDarkMode,
+          toggleThemeMode: _toggleThemeMode,
+        ),
+        '/logs': (context) =>  LogsPage(
           isDarkMode: _isDarkMode,
           toggleThemeMode: _toggleThemeMode,
         ),
